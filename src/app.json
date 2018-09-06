@@ -1,17 +1,39 @@
 {
   "pages": [
     "pages/index/main",
-    "pages/logs/main",
-    "pages/counter/main",
     "pages/soft-center/main",
     "pages/installed/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
-
-    
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
     "navigationBarTextStyle": "black"
+    },
+    "tabBar": {
+    "color": "#9B9DB1",
+    "selectedColor": "#FF6725",
+    "borderStyle": "#9B9DB1",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/main",
+        "text": "已安装",
+        "iconPath": "/static/images/footer/btn_company.png",
+        "selectedIconPath": "/static/images/footer/btn_company_s.png"
+      },
+      {
+        "pagePath": "pages/installed/main",
+        "text": "未安装",
+        "iconPath": "/static/images/footer/btn_own.png",
+        "selectedIconPath": "/static/images/footer/btn_own_s.png"
+      },
+      {
+        "pagePath": "pages/soft-center/main",
+        "text": "个人中心",
+        "iconPath": "/static/images/footer/btn_my.png",
+        "selectedIconPath": "/static/images/footer/btn_my_s.png"
+      }
+    ]
   }
 }

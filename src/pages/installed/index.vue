@@ -22,7 +22,6 @@
           <van-button size="mini">按钮</van-button>
       </view>
     </van-card>
-    <button open-type="getUserInfo" @getuserinfo="getUserInfo"> 授权登录 </button>
     <picker mode="date" :value="date" start="2015-09-01" end="2017-09-01" @change="bindDateChange">
         <view class="picker">
           当前选择: {{date}}

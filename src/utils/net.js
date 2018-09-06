@@ -104,13 +104,7 @@ function request(opts) {
           */
           const applyUpdate = !!wx.getUpdateManager ? 1 : 0; //强制更新功能是否可用
           opts.url = `${baseURL}${url}`;
-          //判断是否需要携带token
-          if (opts.needToken) {
-            //使用传入的token
-            token = opts.token || token;
-            //将token拼接到url
-            opts.url = `${opts.url}&token=${token}`;
-          }
+        
           const host = `(${opts.method})${opts.url}`;
           const formData = opts.isUploadFile ? opts.formData : opts.data;
           //请求失败回调
@@ -129,53 +123,14 @@ function request(opts) {
             if (res.statusCode == 200) {
               //网络正常返回
               let data = res.data;
-              //
-              //捕获字符串解析错误
-              try {
-                if (typeof data === "string") {
-                  data = JSON.parse(data);
-                }
-              } catch (err) {
-                reject(res);
-                errorHandel(
-                  opts.needShowError,
-                  null,
-                  "response格式错误",
-                  host,
-                  "formdata:",
-                  formData,
-                  "response:",
-                  res
-                );
-                return;
-              }
-              if (typeof data.code === "undefined") {
-                //返回格式错误，将上报
-                reject(res);
-                errorHandel(
-                  opts.needShowError,
-                  null,
-                  "data.code错误",
-                  host,
-                  "formdata:",
-                  formData,
-                  "response:",
-                  res
-                );
-                return;
-              }
-              if (
-                opts.ext.codes &&
+
+              if ( opts.ext.codes &&
                 opts.ext.codes.indexOf(String(data.code)) >= 0
               ) {
                 //如果匹配到自定义的状态码，将执行对应的handle。
                 opts.ext.handle(data);
                 reject(res);
-              } else if (
-                opts.needToken &&
-                String(data.code) === "401" &&
-                retry
-              ) {
+              } else if ( opts.needToken && String(data.code) === "401" && retry ) {
                 //当token必填且token无效且需要重试
                 //重新获取token
                 updateToken().then(handle);
@@ -189,19 +144,6 @@ function request(opts) {
                 opts.unforeseen(data);
                 reject(res);
               }
-            } else {
-              //网络返回非200
-              reject(res);
-              errorHandel(
-                opts.needShowError,
-                null,
-                "statusCode非200",
-                host,
-                "formdata:",
-                formData,
-                "response:",
-                res
-              );
             }
           };
           opts.complete = () => {
@@ -217,36 +159,35 @@ function request(opts) {
             wx.request(opts);
           }
           console.log(`😣请求开始：${host}`, formData);
-        })(true);
-      })
-}
+      })(token, true);
+    })
+)}
 
 /**
  * 从本地获取token
  * @returns {Promise}
  */
 async function getToken() {
-    // await token = wx.getStorage({
-    //     key: 'token'});
-  return new Promise(resolve => {
-    wx.getStorage({
-      key: "token",
-      success: res => {
-        if (res.data) {
-          //返回指定域名
-          resolve(res.data);
-        } else {
-          //默认返回正式域名
-          resolve("none");
-        }
-      },
-      fail: () => {
-          debugger
-        //默认返回正式域名
-        resolve("none");
-      }
-    });
-  });
+  const token = await wx.getStorage({
+        key: 'token'});
+  // return new Promise(resolve => {
+  //   wx.getStorage({
+  //     key: "token",
+  //     success: res => {
+  //       if (res.data) {
+  //         //返回指定域名
+  //         resolve(res.data);
+  //       } else {
+  //         //默认返回正式域名
+  //         resolve("none");
+  //       }
+  //     },
+  //     fail: () => {
+  //       //默认返回正式域名
+  //       resolve("none");
+  //     }
+  //   });
+  // });
 }
 /**
  * 登录并获取新的token
@@ -309,5 +250,23 @@ function updateToken(token) {
   }
 }
 
+/**
+ * 登录并获取新的token
+ * @returns {Promise}
+ */
+function getUserInfo(code) {
+    return new Promise((resolve, reject) => {
+        wx.getUserInfo({
+            success: res => {
+                console.log(code, res);
+                resolve({code, res})
+            },
+            fail(res) {
+                reject(res);
+            }
+        })
+    })
+}
+
 export default request;
-export { request, getToken, updateToken, setToken, login };
+export { request, getToken, getUserInfo, updateToken, setToken, login };

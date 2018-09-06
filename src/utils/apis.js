@@ -15,7 +15,6 @@ const baseWSSURLs = [
 const apis = {
   'postLogin': '/wechat/littleapp/login',
   'getrouters': '/littleapp/routers',
-
 };
 
 export { apis, baseURL, baseWSSURLs };
