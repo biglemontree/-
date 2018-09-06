@@ -7,8 +7,8 @@
         <van-badge title="标签名称" />
         <van-badge title="标签名称" info="8" />
     </van-badge-group>
-    <van-loading />
-    <van-loading color="#fff" />
+    <!-- <van-loading />
+    <van-loading color="#fff" /> -->
     <van-card
         title="标题"
         desc="描述"  
@@ -27,6 +27,7 @@
 <script>
 import card from "@/components/card";
 import {request} from '@/utils/net.js'
+import {apis} from '@/utils/config.js'
 import Notify from "../../../static/vant/notify/notify";
 export default {
   data() {
@@ -55,9 +56,22 @@ export default {
   },
 
   created() {
-    console.log(request)
+    console.log(wx)
+    // wx.request({
+    //     url: `https://service.ddnsto.com${apis.postUnionId}`,
+    //     method: 'post',
+    //     header: {
+    //         ksuser: "d215133c-50ac-4442-af6f-e8ae22abfd1f"
+    //     }
+    // })
     request({
-        url: '/login'
+        url: apis.routers,
+        method: 'post',
+        header: {
+            ksuser: "d215133c-50ac-4442-af6f-e8ae22abfd1f"
+        }
+    }).then(r => {
+
     })
   }
 };

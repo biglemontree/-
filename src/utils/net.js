@@ -76,7 +76,7 @@ function request(opts) {
     url: '',
     data: {},
     method: 'GET',
-    needToken: true,
+    needToken: false,
     needShowError: true,
     token: '',
     needShowLoading: true,
@@ -104,26 +104,18 @@ function request(opts) {
   }
 
   const url = opts.url;
-  return getToken().then(
-    token =>
-      new Promise((resolve, reject) => {
-        (function handle(token, retry = false) {
+  return new Promise((resolve, reject) => {
+      
+        return (function handle(retry = false) {
           //...
           //拼接url
           const baseURL = getBaseURL(opts.e);
           const version = getApp().globalData.version;
           opts.url = `${baseURL}${url}?_v=${version}`;
-          //判断是否需要携带token
-          if (opts.needToken) {
-            //使用传入的token
-            token = opts.token || token;
-            //将token拼接到url
-            opts.url = `${opts.url}&token=${token}`;
-          }
 
           const host = `(${opts.method})${opts.url}`;
           const formData = opts.isUploadFile ? opts.formData : opts.data;
-
+            debugger
           //请求失败回调
           opts.fail = res => {
             reject();
@@ -232,9 +224,8 @@ function request(opts) {
             wx.request(opts);
           }
           console.log(`😣请求开始：${host}`, formData);
-        })(token, true);
+        })(true);
       })
-  );
 }
 
 /**
@@ -253,7 +244,9 @@ function getBaseURL(e) {
  * 从本地获取token
  * @returns {Promise}
  */
-function getToken() {
+async function getToken() {
+    // await token = wx.getStorage({
+    //     key: 'token'});
   return new Promise(resolve => {
     wx.getStorage({
       key: 'token',
@@ -267,6 +260,7 @@ function getToken() {
         }
       },
       fail: () => {
+          debugger
         //默认返回正式域名
         resolve('none');
       }
